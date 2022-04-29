@@ -47,7 +47,7 @@ namespace MartinDrozdik.Services.ImageSaving
             using Image image = Image.Load(imageData, out IImageFormat format);
 
             //Resize
-            var size = GetImageSize(image.Height, image.Width, config);
+            var size = GetImageSize(image.Width, image.Height, config);
             image.Mutate(x => x.Resize(size.Width, size.Height));
 
             //Quality
