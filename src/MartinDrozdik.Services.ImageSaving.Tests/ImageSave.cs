@@ -37,7 +37,7 @@ namespace MartinDrozdik.Tests.Services.ImageProcessing
                 var imageSaver = new ImageSaver();
                 using var image = GetExampleImage();
 
-                await imageSaver.Save(imagePath, image);
+                await imageSaver.SaveAsync(imagePath, image);
 
                 Assert.IsTrue(File.Exists(imagePath));
             }
@@ -59,7 +59,7 @@ namespace MartinDrozdik.Tests.Services.ImageProcessing
                 var imageSaver = new ImageSaver();
                 using var image = GetExampleImage();
 
-                await imageSaver.Save(imagePath, image, new ImageConfiguration()
+                await imageSaver.SaveAsync(imagePath, image, new ImageConfiguration()
                 {
                     MaxWidth = 50,
                     Quality = 80

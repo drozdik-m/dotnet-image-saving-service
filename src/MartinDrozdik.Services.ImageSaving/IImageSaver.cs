@@ -11,7 +11,7 @@ namespace MartinDrozdik.Services.ImageSaving
         /// </summary>
         /// <param name="path">The target image path</param>
         /// <param name="imageData">The image to save</param>
-        Task Save(string path, Stream imageData);
+        Task SaveAsync(string path, Stream imageData);
 
         /// <summary>
         /// Saves an image
@@ -19,6 +19,6 @@ namespace MartinDrozdik.Services.ImageSaving
         /// <param name="path">The target image path</param>
         /// <param name="imageData">The image to save</param>
         /// <param name="config">Save configuration</param>
-        Task Save(string path, Stream imageData, IImageConfiguration config);
+        Task SaveAsync(string path, Stream imageData, IImageConfiguration config);
     }
 }

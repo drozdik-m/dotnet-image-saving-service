@@ -18,7 +18,7 @@ namespace MartinDrozdik.Services.ImageSaving
         static readonly ResourceManager resources = new ResourceManager(typeof(Resources));
 
         /// <inheritdoc/>
-        public async Task Save(string path, Stream imageData)
+        public async Task SaveAsync(string path, Stream imageData)
         {
             if (imageData == null)
                 throw new ArgumentNullException(nameof(imageData));
@@ -33,7 +33,7 @@ namespace MartinDrozdik.Services.ImageSaving
         }
 
         /// <inheritdoc/>
-        public async Task Save(string path, Stream imageData, IImageConfiguration config)
+        public async Task SaveAsync(string path, Stream imageData, IImageConfiguration config)
         {
             if (imageData == null)
                 throw new ArgumentNullException(nameof(imageData));
