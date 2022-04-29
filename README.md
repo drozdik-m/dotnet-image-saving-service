@@ -40,7 +40,7 @@ public interface IImageConfiguration
 }
 ```
 
-The saver will try to match your set width/height properties. If you set only one dimension (width/height), the *aspect ratio will be preserved*!
+The saver will try to match your set width/height properties. If you set only one dimension (width/height), the **aspect ratio will be preserved**!
 
 The quality should be in the range 1-100 and is applied for formats that support it (jpeg, webm). 
 
