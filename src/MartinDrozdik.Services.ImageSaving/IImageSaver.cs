@@ -14,7 +14,7 @@ namespace MartinDrozdik.Services.ImageSaving
         Task Save(string path, Stream imageData);
 
         /// <summary>
-        /// Save an image
+        /// Saves an image
         /// </summary>
         /// <param name="path">The target image path</param>
         /// <param name="imageData">The image to save</param>
