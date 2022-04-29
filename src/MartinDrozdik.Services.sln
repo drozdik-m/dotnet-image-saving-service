@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32407.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MartinDrozdik.Services.ImageSaving", "MartinDrozdik.Services.ImageSaving\MartinDrozdik.Services.ImageSaving.csproj", "{12A45B44-87CA-4075-AB74-C70F2524D36B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MartinDrozdik.Services.ImageSaving.Tests", "MartinDrozdik.Services.ImageSaving.Tests\MartinDrozdik.Services.ImageSaving.Tests.csproj", "{C935DB71-4A9A-49EC-9B37-C526A16A5C01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12A45B44-87CA-4075-AB74-C70F2524D36B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12A45B44-87CA-4075-AB74-C70F2524D36B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12A45B44-87CA-4075-AB74-C70F2524D36B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12A45B44-87CA-4075-AB74-C70F2524D36B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C935DB71-4A9A-49EC-9B37-C526A16A5C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C935DB71-4A9A-49EC-9B37-C526A16A5C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C935DB71-4A9A-49EC-9B37-C526A16A5C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C935DB71-4A9A-49EC-9B37-C526A16A5C01}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B069793C-2833-41BB-BE09-A666109E19FF}
+	EndGlobalSection
+EndGlobal
