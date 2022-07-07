@@ -43,12 +43,16 @@ namespace MartinDrozdik.Services.ImageSaving
 
             path = Path.GetFullPath(path);
 
-            ///Load
+            //Load
             using Image image = Image.Load(imageData, out IImageFormat format);
 
             //Resize
-            var size = GetImageSize(image.Width, image.Height, config);
-            image.Mutate(x => x.Resize(size.Width, size.Height));
+            if (!(config.Width == default && config.Height == default
+                && config.MaxWidth == default && config.MaxHeight == default))
+            {
+                var size = GetImageSize(image.Width, image.Height, config);
+                image.Mutate(x => x.Resize(size.Width, size.Height));
+            }
 
             //Quality
             ImageFormatManager formatManager = SixLabors.ImageSharp.Configuration.Default.ImageFormatsManager;
