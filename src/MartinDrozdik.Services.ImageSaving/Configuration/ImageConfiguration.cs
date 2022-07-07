@@ -30,6 +30,6 @@ namespace MartinDrozdik.Services.ImageSaving.Configuration
                 quality = value;
             }
         }
-        int quality = 100;
+        int quality = 75;
     }
 }

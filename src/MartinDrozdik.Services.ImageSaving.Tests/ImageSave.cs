@@ -48,6 +48,35 @@ namespace MartinDrozdik.Tests.Services.ImageProcessing
         }
 
         [Test]
+        public async Task SaveImageDefauktConfig()
+        {
+            var imagePath = Guid.NewGuid().ToString() + ".png";
+
+            try
+            {
+                Assert.IsFalse(File.Exists(imagePath));
+
+                var imageSaver = new ImageSaver();
+                using var image = GetExampleImage();
+
+                await imageSaver.SaveAsync(imagePath, image, new ImageConfiguration()
+                {
+                    Quality = default
+                });
+
+                Assert.IsTrue(File.Exists(imagePath));
+
+                using var savedImage = Image.Load(imagePath);
+                Assert.AreEqual(100, savedImage.Width);
+                Assert.AreEqual(100, savedImage.Height);
+            }
+            finally
+            {
+                File.Delete(imagePath);
+            }
+        }
+
+        [Test]
         public async Task SaveImageConfig()
         {
             var imagePath = Guid.NewGuid().ToString() + ".png";

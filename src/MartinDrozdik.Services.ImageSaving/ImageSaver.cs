@@ -25,11 +25,13 @@ namespace MartinDrozdik.Services.ImageSaving
 
             path = Path.GetFullPath(path);
 
+            await CopyToFile(path, imageData);
+
             //Load
-            using Image image = Image.Load(imageData/*, out IImageFormat format*/);
+            //using Image image = Image.Load(imageData/*, out IImageFormat format*/);
 
             //Save
-            await image.SaveAsync(path);
+            //await image.SaveAsync(path);
         }
 
         /// <inheritdoc/>
@@ -42,6 +44,10 @@ namespace MartinDrozdik.Services.ImageSaving
                 throw new ArgumentNullException(nameof(config));
 
             path = Path.GetFullPath(path);
+
+            //Default behaviour
+            if (await CheckForDefaultBehaviour(path, imageData, config))
+                return;
 
             //Load
             using Image image = Image.Load(imageData, out IImageFormat format);
@@ -72,6 +78,41 @@ namespace MartinDrozdik.Services.ImageSaving
             //Save
             await image.SaveAsync(path, encoder);
         }
+
+        /// <summary>
+        /// Check if the file should be simply saved, without any coversion.
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <param name="imageData"></param>
+        /// <param name="config"></param>
+        /// <returns>True if the image needs no further process. Else false.</returns>
+        protected async Task<bool> CheckForDefaultBehaviour(string fullPath, Stream imageData, IImageConfiguration config)
+        {
+            //No width or quality? Simply save it!
+            if (config.Quality == default &&
+                config.Width == default && config.Height == default
+                && config.MaxWidth == default && config.MaxHeight == default)
+            {
+                await CopyToFile(fullPath, imageData);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Simply outputs the stream into a file
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <param name="imageData"></param>
+        /// <returns></returns>
+        protected async Task CopyToFile(string fullPath, Stream imageData)
+        {
+            using var outputStream = File.Create(fullPath);
+            imageData.Seek(0, SeekOrigin.Begin);
+            await imageData.CopyToAsync(outputStream);
+        }
+
 
         /// <summary>
         /// Calculates appropriate image size
