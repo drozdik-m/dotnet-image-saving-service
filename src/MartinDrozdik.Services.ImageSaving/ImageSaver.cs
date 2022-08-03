@@ -52,6 +52,12 @@ namespace MartinDrozdik.Services.ImageSaving
             //Load
             using Image image = Image.Load(imageData, out IImageFormat format);
 
+            //Auto rotate (exif)
+            image.Mutate(e =>
+            {
+                e.AutoOrient();
+            });
+
             //Resize
             if (!(config.Width == default && config.Height == default
                 && config.MaxWidth == default && config.MaxHeight == default))
