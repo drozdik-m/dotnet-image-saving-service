@@ -12,7 +12,6 @@ builder.Services.AddImageSaver();
 var saver = new ImageSaver();
 ```
 
-
 ## Usage
 
 Use the following interface:
@@ -20,8 +19,9 @@ Use the following interface:
 ```csharp
 public interface IImageSaver
 {
-    Task Save(string path, Stream imageData);
-    Task Save(string path, Stream imageData, IImageConfiguration config);
+    Task SaveAsync(string path, Stream imageData);
+    Task SaveAsync(string path, Stream imageData, IImageConfiguration config);
+    Task SaveAsync(Stream imageData, params (string path, IImageConfiguration config)[] targets);
 }
 ```
 
@@ -52,6 +52,10 @@ await imageSaver.Save(imagePath, image, new ImageConfiguration()
     Quality = 80
 });
 ```
+
+If all config values are default or the file is of type .svg, the stream is straight up dumped into the file without any modifications.
+
+
 
 ## Under the hood
 

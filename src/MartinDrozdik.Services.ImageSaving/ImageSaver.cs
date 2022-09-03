@@ -1,6 +1,7 @@
 ﻿using MartinDrozdik.Services.ImageSaving.Configuration;
 using MartinDrozdik.Services.ImageSaving.Properties;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Webp;
@@ -10,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Resources;
 using System.Threading.Tasks;
+using Path = System.IO.Path;
 
 namespace MartinDrozdik.Services.ImageSaving
 {
@@ -85,6 +87,63 @@ namespace MartinDrozdik.Services.ImageSaving
             await image.SaveAsync(path, encoder);
         }
 
+        /// <inheritdoc/>
+        public async Task SaveAsync(Stream imageData, params (string path, IImageConfiguration config)[] targets)
+        {
+            if (imageData == null)
+                throw new ArgumentNullException(nameof(imageData));
+
+            Image image = null;
+            IImageEncoder encoder = null;
+
+            foreach(var (targetPath, config) in targets)
+            {
+                if (config == null)
+                    throw new ArgumentNullException(nameof(config));
+
+                var path = Path.GetFullPath(targetPath);
+
+                //Default behaviour
+                if (await CheckForDefaultBehaviour(path, imageData, config))
+                    return;
+
+                //Load the image if not already loaded
+                if (image == null)
+                {
+                    image = Image.Load(imageData, out IImageFormat format);
+
+                    //Auto rotate (exif)
+                    image.Mutate(e =>
+                    {
+                        e.AutoOrient();
+                    });
+
+                    //Encoder
+                    ImageFormatManager formatManager = SixLabors.ImageSharp.Configuration.Default.ImageFormatsManager;
+                    encoder = formatManager.FindEncoder(format);
+                }
+
+                //Quality
+                if (encoder is JpegEncoder jpeg)
+                    jpeg.Quality = config.Quality;
+                else if (encoder is WebpEncoder webp)
+                    webp.Quality = config.Quality;
+
+                //Resize
+                if (!(config.Width == default && config.Height == default
+                    && config.MaxWidth == default && config.MaxHeight == default))
+                {
+                    var size = GetImageSize(image.Width, image.Height, config);
+                    image.Mutate(x => x.Resize(size.Width, size.Height));
+                }
+
+                //Save
+                await image.SaveAsync(path, encoder);
+            }
+
+            image?.Dispose();
+        }
+
         /// <summary>
         /// Check if the file should be simply saved, without any coversion.
         /// </summary>
@@ -98,6 +157,14 @@ namespace MartinDrozdik.Services.ImageSaving
             if (config.Quality == default &&
                 config.Width == default && config.Height == default
                 && config.MaxWidth == default && config.MaxHeight == default)
+            {
+                await CopyToFile(fullPath, imageData);
+                return true;
+            }
+
+            //SVG image? Simply save it!
+            var extention = Path.GetExtension(fullPath);
+            if(extention != null && extention.ToLowerInvariant() == ".svg")
             {
                 await CopyToFile(fullPath, imageData);
                 return true;
