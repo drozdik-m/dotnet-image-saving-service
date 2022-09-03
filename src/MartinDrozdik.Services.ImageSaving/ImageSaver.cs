@@ -101,6 +101,8 @@ namespace MartinDrozdik.Services.ImageSaving
                 if (config == null)
                     throw new ArgumentNullException(nameof(config));
 
+                imageData.Seek(0, SeekOrigin.Begin);
+
                 var path = Path.GetFullPath(targetPath);
 
                 //Default behaviour
