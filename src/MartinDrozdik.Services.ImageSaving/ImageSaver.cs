@@ -105,7 +105,7 @@ namespace MartinDrozdik.Services.ImageSaving
 
                 //Default behaviour
                 if (await CheckForDefaultBehaviour(path, imageData, config))
-                    return;
+                    continue;
 
                 //Load the image if not already loaded
                 if (image == null)
