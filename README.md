@@ -2,6 +2,8 @@
 
 A service to save your images to disk with little effort. It solves the problem with resizing and quality handling.
 
+(!!!) The code uses [ImageSharp](https://sixlabors.com/products/imagesharp/) – check your license and stuff.
+
 ## Setup
 
 Add the saver to your service collection or straight up instantiate it like a bad boy.
