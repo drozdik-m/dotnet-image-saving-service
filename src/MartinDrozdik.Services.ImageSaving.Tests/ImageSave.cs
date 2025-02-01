@@ -1,192 +1,191 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using MartinDrozdik.Services.ImageSaving;
 using MartinDrozdik.Services.ImageSaving.Configuration;
 using NUnit.Framework;
 using SixLabors.ImageSharp;
 
-namespace MartinDrozdik.Tests.Services.ImageProcessing
+namespace MartinDrozdik.Services.ImageSaving.Tests;
+
+public class ImageSaveTests
 {
-    public class ImageSaveTests
+    private static MemoryStream GetExampleImage()
     {
+        var imageBytes = Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAnElEQVR42u3RAQ0AAAgDIE1u9FvDOahAVzLFGS1ECEKEIEQIQoQgRIgQIQgRghAhCBGCECEIQYgQhAhBiBCECEEIQoQgRAhChCBECEIQIgQhQhAiBCFCEIIQIQgRghAhCBGCEIQIQYgQhAhBiBCEIEQIQoQgRAhChCAEIUIQIgQhQhAiBCEIEYIQIQgRghAhCBEiRAhChCBECEK+W3uw+TnWoJc/AAAAAElFTkSuQmCC");
+        var imageStream = new MemoryStream(imageBytes);
+        return imageStream;
+    }
 
-        [SetUp]
-        public void Setup()
+    private static MemoryStream GetExampleSVG()
+    {
+        var imageBytes = Convert.FromBase64String("PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaWQ9IkxheWVyXzFfMV8iIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMTYgMTYiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik04LjYxMiwyLjM0N0w4LDIuOTk3bC0wLjYxMi0wLjY1Yy0xLjY5LTEuNzk1LTQuNDMtMS43OTUtNi4xMiwwYy0xLjY5LDEuNzk1LTEuNjksNC43MDYsMCw2LjUwMmwwLjYxMiwwLjY1TDgsMTYgIGw2LjEyLTYuNTAybDAuNjEyLTAuNjVjMS42OS0xLjc5NSwxLjY5LTQuNzA2LDAtNi41MDJDMTMuMDQyLDAuNTUxLDEwLjMwMiwwLjU1MSw4LjYxMiwyLjM0N3oiLz48L3N2Zz4=");
+        var imageStream = new MemoryStream(imageBytes);
+        return imageStream;
+    }
+
+    [Test]
+    public async Task SaveImage()
+    {
+        var imagePath = Guid.NewGuid().ToString() + ".png";
+
+        try
         {
+            Assert.That(File.Exists(imagePath), Is.False);
 
+            var imageSaver = new ImageSaver();
+            using var image = GetExampleImage();
+
+            await imageSaver.SaveAsync(imagePath, image, CancellationToken.None);
+
+            Assert.That(File.Exists(imagePath), Is.True);
         }
-
-        Stream GetExampleImage()
+        finally
         {
-            var imageBytes = Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAnElEQVR42u3RAQ0AAAgDIE1u9FvDOahAVzLFGS1ECEKEIEQIQoQgRIgQIQgRghAhCBGCECEIQYgQhAhBiBCECEEIQoQgRAhChCBECEIQIgQhQhAiBCFCEIIQIQgRghAhCBGCEIQIQYgQhAhBiBCEIEQIQoQgRAhChCAEIUIQIgQhQhAiBCEIEYIQIQgRghAhCBEiRAhChCBECEK+W3uw+TnWoJc/AAAAAElFTkSuQmCC");
-            var imageStream = new MemoryStream(imageBytes);
-            return imageStream;
+            File.Delete(imagePath);
         }
+    }
 
-        Stream GetExampleSVG()
+    [Test]
+    public async Task SaveSVG()
+    {
+        var imagePath = Guid.NewGuid().ToString() + ".svg";
+
+        try
         {
-            var imageBytes = Convert.FromBase64String("PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaWQ9IkxheWVyXzFfMV8iIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMTYgMTYiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik04LjYxMiwyLjM0N0w4LDIuOTk3bC0wLjYxMi0wLjY1Yy0xLjY5LTEuNzk1LTQuNDMtMS43OTUtNi4xMiwwYy0xLjY5LDEuNzk1LTEuNjksNC43MDYsMCw2LjUwMmwwLjYxMiwwLjY1TDgsMTYgIGw2LjEyLTYuNTAybDAuNjEyLTAuNjVjMS42OS0xLjc5NSwxLjY5LTQuNzA2LDAtNi41MDJDMTMuMDQyLDAuNTUxLDEwLjMwMiwwLjU1MSw4LjYxMiwyLjM0N3oiLz48L3N2Zz4=");
-            var imageStream = new MemoryStream(imageBytes);
-            return imageStream;
+            Assert.That(File.Exists(imagePath), Is.False);
+
+            var imageSaver = new ImageSaver();
+            using var image = GetExampleSVG();
+
+            await imageSaver.SaveAsync(imagePath, image, CancellationToken.None);
+
+            Assert.That(File.Exists(imagePath), Is.True);
         }
-
-        [Test]
-        public async Task SaveImage()
+        finally
         {
-            var imagePath = Guid.NewGuid().ToString() + ".png";
-
-            try
-            {
-                Assert.IsFalse(File.Exists(imagePath));
-
-                var imageSaver = new ImageSaver();
-                using var image = GetExampleImage();
-
-                await imageSaver.SaveAsync(imagePath, image);
-
-                Assert.IsTrue(File.Exists(imagePath));
-            }
-            finally
-            {
-                File.Delete(imagePath);
-            }
+            File.Delete(imagePath);
         }
+    }
 
-        [Test]
-        public async Task SaveSVG()
+    [Test]
+    public async Task SaveImageDefaultConfig()
+    {
+        var imagePath = Guid.NewGuid().ToString() + ".png";
+
+        try
         {
-            var imagePath = Guid.NewGuid().ToString() + ".svg";
+            Assert.That(File.Exists(imagePath), Is.False);
 
-            try
+            var imageSaver = new ImageSaver();
+            using var image = GetExampleImage();
+
+            await imageSaver.SaveAsync(imagePath, image, new ImageConfiguration()
             {
-                Assert.IsFalse(File.Exists(imagePath));
+                Quality = default
+            }, CancellationToken.None);
 
-                var imageSaver = new ImageSaver();
-                using var image = GetExampleSVG();
+            Assert.That(File.Exists(imagePath), Is.True);
 
-                await imageSaver.SaveAsync(imagePath, image);
-
-                Assert.IsTrue(File.Exists(imagePath));
-            }
-            finally
-            {
-                File.Delete(imagePath);
-            }
+            using var savedImage = await Image.LoadAsync(imagePath);
+            Assert.That(savedImage.Width, Is.EqualTo(100));
+            Assert.That(savedImage.Height, Is.EqualTo(100));
         }
-
-        [Test]
-        public async Task SaveImageDefaultConfig()
+        finally
         {
-            var imagePath = Guid.NewGuid().ToString() + ".png";
-
-            try
-            {
-                Assert.IsFalse(File.Exists(imagePath));
-
-                var imageSaver = new ImageSaver();
-                using var image = GetExampleImage();
-
-                await imageSaver.SaveAsync(imagePath, image, new ImageConfiguration()
-                {
-                    Quality = default
-                });
-
-                Assert.IsTrue(File.Exists(imagePath));
-
-                using var savedImage = Image.Load(imagePath);
-                Assert.AreEqual(100, savedImage.Width);
-                Assert.AreEqual(100, savedImage.Height);
-            }
-            finally
-            {
-                File.Delete(imagePath);
-            }
+            File.Delete(imagePath);
         }
+    }
 
-        [Test]
-        public async Task SaveImageConfig()
+    [Test]
+    public async Task SaveImageConfig()
+    {
+        var imagePath = Guid.NewGuid().ToString() + ".png";
+
+        try
         {
-            var imagePath = Guid.NewGuid().ToString() + ".png";
+            Assert.That(File.Exists(imagePath), Is.False);
 
-            try
+            var imageSaver = new ImageSaver();
+            using var image = GetExampleImage();
+
+            await imageSaver.SaveAsync(imagePath, image, new ImageConfiguration()
             {
-                Assert.IsFalse(File.Exists(imagePath));
+                MaxWidth = 50,
+                Quality = 80
+            }, CancellationToken.None);
 
-                var imageSaver = new ImageSaver();
-                using var image = GetExampleImage();
+            Assert.That(File.Exists(imagePath), Is.True);
 
-                await imageSaver.SaveAsync(imagePath, image, new ImageConfiguration()
-                {
-                    MaxWidth = 50,
-                    Quality = 80
-                });
-
-                Assert.IsTrue(File.Exists(imagePath));
-
-                using var savedImage = Image.Load(imagePath);
-                Assert.AreEqual(50, savedImage.Width);
-                Assert.AreEqual(50, savedImage.Height);
-            }
-            finally
-            {
-                File.Delete(imagePath);
-            }
+            using var savedImage = await Image.LoadAsync(imagePath);
+            Assert.That(savedImage.Width, Is.EqualTo(50));
+            Assert.That(savedImage.Height, Is.EqualTo(50));
         }
-
-        [Test]
-        public async Task SaveMultiConfig()
+        finally
         {
-            var imagePath1 = Guid.NewGuid().ToString() + ".png";
-            var imagePath2 = Guid.NewGuid().ToString() + ".png";
-            var imagePath3 = Guid.NewGuid().ToString() + ".png";
+            File.Delete(imagePath);
+        }
+    }
 
-            try
-            {
-                Assert.IsFalse(File.Exists(imagePath1));
-                Assert.IsFalse(File.Exists(imagePath2));
-                Assert.IsFalse(File.Exists(imagePath3));
+    [Test]
+    public async Task SaveMultiConfig()
+    {
+        var imagePath1 = Guid.NewGuid().ToString() + ".png";
+        var imagePath2 = Guid.NewGuid().ToString() + ".png";
+        var imagePath3 = Guid.NewGuid().ToString() + ".png";
 
-                var imageSaver = new ImageSaver();
-                using var image = GetExampleImage();
+        try
+        {
+            Assert.That(File.Exists(imagePath1), Is.False);
+            Assert.That(File.Exists(imagePath2), Is.False);
+            Assert.That(File.Exists(imagePath3), Is.False);
 
-                await imageSaver.SaveAsync(image, (imagePath1, new ImageConfiguration()
+            var imageSaver = new ImageSaver();
+            using var image = GetExampleImage();
+
+            ImageTarget[] targets = [
+                new ImageTarget(imagePath1, new ImageConfiguration()
                 {
                     MaxWidth = default,
                     Quality = 80
-                }), (imagePath2, new ImageConfiguration()
+                }),
+                new ImageTarget(imagePath2, new ImageConfiguration()
                 {
                     MaxWidth = 75,
                     Quality = 70
-                }), (imagePath3, new ImageConfiguration()
+                }),
+                new ImageTarget(imagePath3, new ImageConfiguration()
                 {
                     MaxWidth = 50,
                     Quality = 60
-                }));
+                })
+            ];
 
-                Assert.IsTrue(File.Exists(imagePath1));
-                Assert.IsTrue(File.Exists(imagePath2));
-                Assert.IsTrue(File.Exists(imagePath3));
+            await imageSaver.SaveAsync(image, targets, CancellationToken.None);
 
-                using var savedImage1 = Image.Load(imagePath1);
-                Assert.AreEqual(100, savedImage1.Width);
-                Assert.AreEqual(100, savedImage1.Height);
+            Assert.That(File.Exists(imagePath1), Is.True);
+            Assert.That(File.Exists(imagePath2), Is.True);
+            Assert.That(File.Exists(imagePath3), Is.True);
 
-                using var savedImage2 = Image.Load(imagePath2);
-                Assert.AreEqual(75, savedImage2.Width);
-                Assert.AreEqual(75, savedImage2.Height);
+            using var savedImage1 = await Image.LoadAsync(imagePath1);
+            Assert.That(savedImage1.Width, Is.EqualTo(100));
+            Assert.That(savedImage1.Height, Is.EqualTo(100));
 
-                using var savedImage3 = Image.Load(imagePath3);
-                Assert.AreEqual(50, savedImage3.Width);
-                Assert.AreEqual(50, savedImage3.Height);
-            }
-            finally
-            {
-                File.Delete(imagePath1);
-                File.Delete(imagePath2);
-                File.Delete(imagePath3);
-            }
+            using var savedImage2 = await Image.LoadAsync(imagePath2);
+            Assert.That(savedImage2.Width, Is.EqualTo(75));
+            Assert.That(savedImage2.Height, Is.EqualTo(75));
+
+            using var savedImage3 = await Image.LoadAsync(imagePath3);
+            Assert.That(savedImage3.Width, Is.EqualTo(50));
+            Assert.That(savedImage3.Height, Is.EqualTo(50));
+        }
+        finally
+        {
+            File.Delete(imagePath1);
+            File.Delete(imagePath2);
+            File.Delete(imagePath3);
         }
     }
 }

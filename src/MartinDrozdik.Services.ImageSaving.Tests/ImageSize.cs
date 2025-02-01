@@ -1,226 +1,218 @@
-﻿using MartinDrozdik.Services.ImageSaving;
-using MartinDrozdik.Services.ImageSaving.Configuration;
+﻿using MartinDrozdik.Services.ImageSaving.Configuration;
+using MartinDrozdik.Services.ImageSaving.Dimension;
 using NUnit.Framework;
 
-namespace MartinDrozdik.Tests.Services.ImageProcessing
+namespace MartinDrozdik.Services.ImageSaving.Tests;
+
+public class ImageSizeTests
 {
-    public class ImageSizeTests
+    [Test]
+    public void GetSizeByHeight()
     {
-        [SetUp]
-        public void Setup()
+        Assert.That(DimensionsCalculator.GetSizeByHeight(100, 50, 25).Height, Is.EqualTo(25));
+        Assert.That(DimensionsCalculator.GetSizeByHeight(100, 50, 25).Width, Is.EqualTo(50));
+
+        Assert.That(DimensionsCalculator.GetSizeByHeight(32, 18, 9).Height, Is.EqualTo(9));
+        Assert.That(DimensionsCalculator.GetSizeByHeight(32, 18, 9).Width, Is.EqualTo(16));
+
+        Assert.That(DimensionsCalculator.GetSizeByHeight(100, 100, 50).Height, Is.EqualTo(50));
+        Assert.That(DimensionsCalculator.GetSizeByHeight(100, 100, 50).Width, Is.EqualTo(50));
+    }
+
+    [Test]
+    public void GetSizeByWidth()
+    {
+        Assert.That(DimensionsCalculator.GetSizeByWidth(50, 100, 25).Height, Is.EqualTo(50));
+        Assert.That(DimensionsCalculator.GetSizeByWidth(50, 100, 25).Width, Is.EqualTo(25));
+
+        Assert.That(DimensionsCalculator.GetSizeByWidth(32, 18, 16).Height, Is.EqualTo(9));
+        Assert.That(DimensionsCalculator.GetSizeByWidth(32, 18, 16).Width, Is.EqualTo(16));
+
+        Assert.That(DimensionsCalculator.GetSizeByWidth(100, 100, 50).Height, Is.EqualTo(50));
+        Assert.That(DimensionsCalculator.GetSizeByWidth(100, 100, 50).Width, Is.EqualTo(50));
+    }
+
+    [Test]
+    public void GetImageSize_Empty()
+    {
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()).Width, Is.EqualTo(160));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()).Height, Is.EqualTo(90));
+    }
+
+    [Test]
+    public void GetImageSize_FixedDimensions()
+    {
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
         {
-        }
-
-        [Test]
-        public void GetSizeByHeight()
+            Height = 50,
+            Width = 60
+        }).Width, Is.EqualTo(60));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
         {
-            Assert.AreEqual(25, ImageSaver.GetSizeByHeight(100, 50, 25).Height);
-            Assert.AreEqual(50, ImageSaver.GetSizeByHeight(100, 50, 25).Width);
+            Height = 50,
+            Width = 60
+        }).Height, Is.EqualTo(50));
 
-            Assert.AreEqual(9, ImageSaver.GetSizeByHeight(32, 18, 9).Height);
-            Assert.AreEqual(16, ImageSaver.GetSizeByHeight(32, 18, 9).Width);
-
-            Assert.AreEqual(50, ImageSaver.GetSizeByHeight(100, 100, 50).Height);
-            Assert.AreEqual(50, ImageSaver.GetSizeByHeight(100, 100, 50).Width);
-        }
-
-        [Test]
-        public void GetSizeByWidth()
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
         {
-            Assert.AreEqual(50, ImageSaver.GetSizeByWidth(50, 100, 25).Height);
-            Assert.AreEqual(25, ImageSaver.GetSizeByWidth(50, 100, 25).Width);
-
-            Assert.AreEqual(9, ImageSaver.GetSizeByWidth(32, 18, 16).Height);
-            Assert.AreEqual(16, ImageSaver.GetSizeByWidth(32, 18, 16).Width);
-
-            Assert.AreEqual(50, ImageSaver.GetSizeByWidth(100, 100, 50).Height);
-            Assert.AreEqual(50, ImageSaver.GetSizeByWidth(100, 100, 50).Width);
-        }
-
-        [Test]
-        public void GetImageSize_Empty()
+            Height = 9
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
         {
-            Assert.AreEqual(160, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()).Width);
-            Assert.AreEqual(90, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()).Height);
-        }
+            Height = 9
+        }).Height, Is.EqualTo(9));
 
-        [Test]
-        public void GetImageSize_FixedDimensions()
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
         {
-            Assert.AreEqual(60, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Height = 50,
-                Width = 60
-            }).Width);
-            Assert.AreEqual(50, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Height = 50,
-                Width = 60
-            }).Height);
-
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Height = 9
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Height = 9
-            }).Height);
-
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 16
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 16
-            }).Height);
-        }
-
-        [Test]
-        public void GetImageSize_MaxDimensions_Shrink()
+            Width = 16
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
         {
-            Assert.AreEqual(60, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxHeight = 50,
-                MaxWidth = 60
-            }).Width);
-            Assert.AreEqual(50, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxHeight = 50,
-                MaxWidth = 60
-            }).Height);
+            Width = 16
+        }).Height, Is.EqualTo(9));
+    }
 
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxHeight = 9
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxHeight = 9
-            }).Height);
-
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxWidth = 16
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxWidth = 16
-            }).Height);
-        }
-
-        [Test]
-        public void GetImageSize_MaxDimensions_Idle()
+    [Test]
+    public void GetImageSize_MaxDimensions_Shrink()
+    {
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
         {
-            Assert.AreEqual(160, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxHeight = 500,
-                MaxWidth = 600
-            }).Width);
-            Assert.AreEqual(90, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxHeight = 500,
-                MaxWidth = 600
-            }).Height);
-
-            Assert.AreEqual(160, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxHeight = 90
-            }).Width);
-            Assert.AreEqual(90, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxHeight = 90
-            }).Height);
-
-            Assert.AreEqual(160, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxWidth = 160
-            }).Width);
-            Assert.AreEqual(90, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                MaxWidth = 160
-            }).Height);
-        }
-
-        [Test]
-        public void GetImageSize_MixedDimensions()
+            MaxHeight = 50,
+            MaxWidth = 60
+        }).Width, Is.EqualTo(60));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
         {
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 16,
-                Height = 9,
-                MaxWidth = 160,
-                MaxHeight = 90
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 16,
-                Height = 9,
-                MaxWidth = 160,
-                MaxHeight = 90
-            }).Height);
+            MaxHeight = 50,
+            MaxWidth = 60
+        }).Height, Is.EqualTo(50));
 
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 160,
-                Height = 90,
-                MaxWidth = 16,
-                MaxHeight = 9
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 16,
-                Height = 9,
-                MaxWidth = 16,
-                MaxHeight = 9
-            }).Height);
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxHeight = 9
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxHeight = 9
+        }).Height, Is.EqualTo(9));
 
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Height = 90,
-                MaxHeight = 9
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Height = 90,
-                MaxHeight = 9
-            }).Height);
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxWidth = 16
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxWidth = 16
+        }).Height, Is.EqualTo(9));
+    }
 
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Height = 9,
-                MaxHeight = 90
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Height = 9,
-                MaxHeight = 90
-            }).Height);
+    [Test]
+    public void GetImageSize_MaxDimensions_Idle()
+    {
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxHeight = 500,
+            MaxWidth = 600
+        }).Width, Is.EqualTo(160));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxHeight = 500,
+            MaxWidth = 600
+        }).Height, Is.EqualTo(90));
 
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 160,
-                MaxWidth = 16
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 160,
-                MaxWidth = 16
-            }).Height);
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxHeight = 90
+        }).Width, Is.EqualTo(160));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxHeight = 90
+        }).Height, Is.EqualTo(90));
 
-            Assert.AreEqual(16, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 16,
-                MaxWidth = 160
-            }).Width);
-            Assert.AreEqual(9, ImageSaver.GetImageSize(160, 90, new ImageConfiguration()
-            {
-                Width = 16,
-                MaxWidth = 160
-            }).Height);
-        }
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxWidth = 160
+        }).Width, Is.EqualTo(160));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            MaxWidth = 160
+        }).Height, Is.EqualTo(90));
+    }
 
+    [Test]
+    public void GetImageSize_MixedDimensions()
+    {
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Width = 16,
+            Height = 9,
+            MaxWidth = 160,
+            MaxHeight = 90
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Width = 16,
+            Height = 9,
+            MaxWidth = 160,
+            MaxHeight = 90
+        }).Height, Is.EqualTo(9));
 
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Width = 160,
+            Height = 90,
+            MaxWidth = 16,
+            MaxHeight = 9
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Width = 16,
+            Height = 9,
+            MaxWidth = 16,
+            MaxHeight = 9
+        }).Height, Is.EqualTo(9));
+
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Height = 90,
+            MaxHeight = 9
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Height = 90,
+            MaxHeight = 9
+        }).Height, Is.EqualTo(9));
+
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Height = 9,
+            MaxHeight = 90
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Height = 9,
+            MaxHeight = 90
+        }).Height, Is.EqualTo(9));
+
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Width = 160,
+            MaxWidth = 16
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Width = 160,
+            MaxWidth = 16
+        }).Height, Is.EqualTo(9));
+
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Width = 16,
+            MaxWidth = 160
+        }).Width, Is.EqualTo(16));
+        Assert.That(DimensionsCalculator.GetImageSize(160, 90, new ImageConfiguration()
+        {
+            Width = 16,
+            MaxWidth = 160
+        }).Height, Is.EqualTo(9));
     }
 }

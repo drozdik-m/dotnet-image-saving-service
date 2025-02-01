@@ -1,36 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace MartinDrozdik.Services.ImageSaving.Configuration;
 
-namespace MartinDrozdik.Services.ImageSaving.Configuration
+public interface IImageConfiguration
 {
-    public interface IImageConfiguration
-    {
-        /// <summary>
-        /// Fixed height of the image [px]
-        /// </summary>
-        int Height { get; set; }
+    /// <summary>
+    /// Fixed height of the image [px]
+    /// </summary>
+    int Height { get; }
 
-        /// <summary>
-        /// Fix width of the image [px]
-        /// </summary>
-        int Width { get; set; }
+    /// <summary>
+    /// Fix width of the image [px]
+    /// </summary>
+    int Width { get; }
 
-        /// <summary>
-        /// Maximum height of the image [px]
-        /// </summary>
-        int MaxHeight { get; set; }
+    /// <summary>
+    /// Maximum height of the image [px]
+    /// </summary>
+    int MaxHeight { get;    }
 
-        /// <summary>
-        /// Maximum width of the image [px]
-        /// </summary>
-        int MaxWidth { get; set; }
+    /// <summary>
+    /// Maximum width of the image [px]
+    /// </summary>
+    int MaxWidth { get; }
 
-        /// <summary>
-        /// Quality of the image [%]
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        int Quality { get; set; }
-
-    }
+    /// <summary>
+    /// Quality of the image [%]
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">The quality must be between 0 % and 100 %</exception>
+    int Quality { get; }
 }
