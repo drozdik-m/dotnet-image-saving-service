@@ -3,29 +3,33 @@ on:
   push:
     branches:
       - main # Default release branch
+
 jobs:
   publish:
     name: build, pack & publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Setup
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
+      # Setup .NET 9
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 3.1.200
+          dotnet-version: 9.0.x
 
-      # Publish Image Saver Service
-      - name: Publish MartinDrozdik.Services.ImageSaving on version change
-        id: publish_nuget_image_saver
-        uses: rohith/publish-nuget@v2
-        with:
-          # Filepath of the project to be packaged, relative to root of repository
-          PROJECT_FILE_PATH: src/MartinDrozdik.Services.ImageSaving/MartinDrozdik.Services.ImageSaving.csproj
-          
-          # NuGet package id, used for version detection & defaults to project name
-          PACKAGE_NAME: MartinDrozdik.Services.ImageSaving
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
 
-          # API key to authenticate with NuGet server
-          NUGET_KEY: ${{secrets.NUGET_PUBLISH_KEY}}
+      # Build the project
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
+      # Pack the NuGet package
+      - name: Pack NuGet package
+        run: dotnet pack src/MartinDrozdik.Services.ImageSaving/MartinDrozdik.Services.ImageSaving.csproj --configuration Release --no-build --output ./packages
+
+      # Publish the NuGet package
+      - name: Publish NuGet package
+        run: dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.NUGET_PUBLISH_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
