@@ -21,9 +21,9 @@ Use the following interface:
 ```csharp
 public interface IImageSaver
 {
-    Task SaveAsync(string path, Stream imageData);
-    Task SaveAsync(string path, Stream imageData, IImageConfiguration config);
-    Task SaveAsync(Stream imageData, params (string path, IImageConfiguration config)[] targets);
+    Task SaveAsync(string path, Stream imageData, CancellationToken cancellationToken);
+    Task SaveAsync(string path, Stream imageData, IImageConfiguration config, CancellationToken cancellationToken);
+    Task SaveAsync(Stream imageData, IEnumerable<ImageTarget> targets, CancellationToken cancellationToken);
 }
 ```
 
@@ -34,11 +34,11 @@ The awesome part is the `IImageConfiguration`. Checkout what properties this bab
 ```csharp
 public interface IImageConfiguration
 {
-    int Height { get; set; }
-    int Width { get; set; }
-    int MaxHeight { get; set; }
-    int MaxWidth { get; set; }
-    int Quality { get; set; }
+    int Height { get; }
+    int Width { get; }
+    int MaxHeight { get; }
+    int MaxWidth { get; }
+    int Quality { get; }
 }
 ```
 
