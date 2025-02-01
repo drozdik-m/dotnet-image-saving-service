@@ -18,13 +18,13 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-      # Restore dependencies
+      # Restore dependencies (Specify solution file)
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore src/MartinDrozdik.Services.ImageSaving.sln
 
       # Build the project
       - name: Build project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build src/MartinDrozdik.Services.ImageSaving.sln --configuration Release --no-restore
 
       # Pack the NuGet package
       - name: Pack NuGet package
